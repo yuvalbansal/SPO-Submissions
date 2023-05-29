@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style id="compiled-css" type="text/css">
+        .box1 {
+            background-color: blue;
+            width: 31%;
+            margin: 11px 0;
+            border-radius: 6px;
+        }
+
+        .box2 {
+            background-color: blue;
+            width: 63%;
+            margin: 11px 0;
+            border-radius: 6px;
+        }
+
+        .box3 {
+            background-color: blue;
+            width: 97%;
+            margin: 11px 0;
+            border-radius: 6px;
+        }
+
+        .text {
+            padding: 11px 0;
+            color: yellow;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .box1 {
+                width: 93%;
+                margin: 11px 8px;
+            }
+
+            .box2 {
+                width: 93%;
+                margin: 11px 8px;
+            }
+
+            .box3 {
+                width: 93%;
+                margin: 11px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="box2">
+            <div class="text">
+                2
+            </div>
+        </div>
+        <div class="box1">
+            <div class="text">
+                1
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="box1">
+            <div class="text">
+                1
+            </div>
+        </div>
+        <div class="box1">
+            <div class="text">
+                1
+            </div>
+        </div>
+        <div class="box1">
+            <div class="text">
+                1
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="box3">
+            <div class="text">
+                3
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API GET Request</title>
+</head>
+<body>
+    <h1>Star Wars Planet Information</h1>
+    <div id="planet-info"></div>
+
+    <script>
+        // Make a GET request to the API endpoint
+        fetch("https://swapi.dev/api/planets/1/")
+            .then(response => response.json())
+            .then(data => {
+                // Access the planet data and display it on the page
+                const planetInfo = document.getElementById("planet-info");
+                planetInfo.innerHTML = `
+                    <h2>${data.name}</h2>
+                    <p><strong>Climate:</strong> ${data.climate}</p>
+                    <p><strong>Terrain:</strong> ${data.terrain}</p>
+                    <p><strong>Population:</strong> ${data.population}</p>
+                `;
+            })
+            .catch(error => {
+                console.log("Error:", error);
+            });
+    </script>
+</body>
+</html>
