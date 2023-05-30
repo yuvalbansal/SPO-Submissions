@@ -2,30 +2,72 @@
 <html>
 
 <head>
-    <title>User Authentication</title>
-    <script src="script.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <title>User Signup</title>
+    <style>
+        #login-container,
+        #signup-container {
+            width: 350px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            margin-top: 50px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #af4c4f;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>User Signup</h1>
-    <form id="signup-form">
-        <label for="userId">User ID:</label>
-        <input type="text" id="userId" name="userId" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Signup">
-    </form>
+    <div id="signup-container">
+        <h2>User Signup</h2>
+        <form id="signup-form">
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId" name="userId" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <button type="submit">Signup</button>
+        </form>
+    </div>
+    <div id="login-container">
+        <h2>User Login</h2>
+        <form id="login-form">
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId" name="userId" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
 
-    <h1>User Login</h1>
-    <form id="login-form">
-        <label for="userId">User ID:</label>
-        <input type="text" id="userId" name="userId" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Login">
-    </form>
-
+    <script src="https://www.gstatic.com/firebasejs/11.25.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.25.1/firebase-database.js"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>
