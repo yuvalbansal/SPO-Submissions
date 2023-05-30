@@ -10,33 +10,16 @@
     <div id="planet-info"></div>
 
     <script>
-        function formatPlanetDetails(data) {
-            return `
-                <h2>${data.name}</h2>
-                <p><strong>Rotation Period:</strong> ${data.rotation_period}</p>
-                <p><strong>Orbital Period:</strong> ${data.orbital_period}</p>
-                <p><strong>Diameter:</strong> ${data.diameter}</p>
-                <p><strong>Climate:</strong> ${data.climate}</p>
-                <p><strong>Gravity:</strong> ${data.gravity}</p>
-                <p><strong>Terrain:</strong> ${data.terrain}</p>
-                <p><strong>Surface Water:</strong> ${data.surface_water}</p>
-                <p><strong>Population:</strong> ${data.population}</p>
-                <p><strong>Residents:</strong> ${data.residents}</p>
-                <p><strong>Films:</strong> ${data.films}</p>
-                <p><strong>Created:</strong> ${data.created}</p>
-                <p><strong>Edited:</strong> ${data.edited}</p>
-                <p><strong>URL:</strong> ${data.url}</p>
-            `;
-        }
         async function fetchPlanetDetails() {
             const cacheKey = 'planetData';
             const expirationTime = 60 * 60 * 1000; // Cache expiration time in milliseconds (1 hour)
 
             // Check if the data is available in the cache and not expired
-            const cachedData = JSON.parse(localStorage.getItem(cacheKey));
+            const cachedData = localStorage.getItem(cacheKey);
+            console.log(cachedData.toString);
             if (cachedData && Date.now() - cachedData.timestamp < expirationTime) {
                 // Use the cached data
-                document.getElementById('planet-info').innerHTML = formatPlanetDetails(cachedData.data);
+                document.getElementById('planet-info').innerHTML = cachedData.data;
             } else {
                 try {
                     // Fetch the data from the API
@@ -47,15 +30,89 @@
 
                     const data = await response.json();
 
+                    var dataHTML = ``;
+                    dataHTML += `
+                        <h3><strong>Planet Name:</strong> ${data.name}</h3>
+                        <hr><h3><strong>Rotation Period:</strong> ${data.rotation_period}</h3>
+                        <hr><h3><strong>Orbital Period:</strong> ${data.orbital_period}</h3>
+                        <hr><h3><strong>Diameter:</strong> ${data.diameter}</h3>
+                        <hr><h3><strong>Climate:</strong> ${data.climate}</h3>
+                        <hr><h3><strong>Gravity:</strong> ${data.gravity}</h3>
+                        <hr><h3><strong>Terrain:</strong> ${data.terrain}</h3>
+                        <hr><h3><strong>Surface Water:</strong> ${data.surface_water}</h3>
+                        <hr><h3><strong>Population:</strong> ${data.population}</h3>
+                        <hr><h3><strong>Residents:</strong></h3>
+                    `
+                    for (var i=0; i<10; i++){
+                        var URL = data.residents[i];
+                        const response = await fetch(URL);
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch resident data');
+                        }
+                        var people = await response.json();
+                        dataHTML += `
+                            <h4><strong>&emsp;Resident Name:</strong> ${people.name}</h4>
+                            <h4><strong>&emsp;Resident Height:</strong> ${people.height}</h4>
+                            <h4><strong>&emsp;Resident Mass:</strong> ${people.mass}</h4>
+                            <h4><strong>&emsp;Resident Hair Color:</strong> ${people.hair_color}</h4>
+                            <h4><strong>&emsp;Resident Skin Color:</strong> ${people.skin_color}</h4>
+                            <h4><strong>&emsp;Resident Eye Color:</strong> ${people.eye_color}</h4>
+                            <h4><strong>&emsp;Resident Birth Year:</strong> ${people.birth_year}</h4>
+                            <h4><strong>&emsp;Resident Gender:</strong> ${people.gender}</h4>
+                            <h4><strong>&emsp;Resident Homeworld:</strong> ${people.homeworld}</h4>
+                            <h4><strong>&emsp;Resident Films:</strong> ${people.films}</h4>
+                            <h4><strong>&emsp;Resident Species:</strong> ${people.species}</h4>
+                            <h4><strong>&emsp;Resident Vehicles:</strong> ${people.vehicles}</h4>
+                            <h4><strong>&emsp;Resident Starships:</strong> ${people.starships}</h4>
+                            <h4><strong>&emsp;Resident Created:</strong> ${people.created}</h4>
+                            <h4><strong>&emsp;Resident Edited:</strong> ${people.edited}</h4>
+                            <h4><strong>&emsp;Resident URL:</strong> ${people.url}</h4>
+                            <hr>
+                        `
+                    }
+                    dataHTML += `
+                    <h3><strong>Films:</strong></h3>
+                    `
+                    for (var i=0; i<5; i++){
+                        var URL = data.films[i];
+                        const response = await fetch(URL);
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch film data');
+                        }
+                        var film = await response.json();
+                        dataHTML += `
+                            <h4><strong>&emsp;Film Title:</strong> ${film.title}</h4>
+                            <h4><strong>&emsp;Film Episode ID:</strong> ${film.episode_id}</h4>
+                            <h4><strong>&emsp;Film Opening Crawl:</strong> ${film.opening_crawl}</h4>
+                            <h4><strong>&emsp;Film Director:</strong> ${film.director}</h4>
+                            <h4><strong>&emsp;Film Producer:</strong> ${film.producer}</h4>
+                            <h4><strong>&emsp;Film Release Date:</strong> ${film.release_date}</h4>
+                            <h4><strong>&emsp;Film Characters:</strong> ${film.characters}</h4>
+                            <h4><strong>&emsp;Film Planets:</strong> ${film.planets}</h4>
+                            <h4><strong>&emsp;Film Starships:</strong> ${film.starships}</h4>
+                            <h4><strong>&emsp;Film Vehicles:</strong> ${film.vehicles}</h4>
+                            <h4><strong>&emsp;Film Species:</strong> ${film.species}</h4>
+                            <h4><strong>&emsp;Film Created:</strong> ${film.created}</h4>
+                            <h4><strong>&emsp;Film Edited:</strong> ${film.edited}</h4>
+                            <h4><strong>&emsp;Film URL:</strong> ${film.url}</h4>
+                            <hr>
+                        `
+                    }
+                    dataHTML += `
+                        <h3><strong>Created:</strong> ${data.created}</h3>
+                        <hr><h3><strong>Edited:</strong> ${data.edited}</h3>
+                        <hr><h3><strong>URL:</strong> ${data.url}</h3><hr>
+                    `
+
                     // Cache the fetched data
                     const cachedData = {
                         timestamp: Date.now(),
-                        data: data
+                        data: dataHTML
                     };
                     localStorage.setItem(cacheKey, JSON.stringify(cachedData));
 
                     // Display the data on the page
-                    document.getElementById('planet-info').innerHTML = formatPlanetDetails(data);
+                    document.getElementById('planet-info').innerHTML = cachedData.data;
                 } catch (error) {
                     console.error(error);
                     alert('An error occurred while fetching the planet data');
