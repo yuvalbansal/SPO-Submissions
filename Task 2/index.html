@@ -1,128 +1,110 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>API GET Request</title>
+  <title>SWAPI Planet Data</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-
 <body>
-    <h1>Star Wars Planet Information</h1>
-    <div id="planet-info"></div>
+  <div id="heading"><h style="font-size: 48px;"><b>Star Wars API GET</b></h></div>
+  <div id="planet-data"></div>
+  <div id="residents-data"></div>
+  <div id="films-data"></div>
 
-    <script>
-        async function fetchPlanetDetails() {
-            const cacheKey = 'planetData';
-            const expirationTime = 60 * 60 * 1000; // Cache expiration time in milliseconds (1 hour) 
+  <script>
+    // Check if the data is cached in the browser
+    const cachedData = localStorage.getItem('swapiPlanetData');
+    if (cachedData) {
+      const parsedData = JSON.parse(cachedData);
+      const expirationTime = parsedData.expirationTime;
+      const currentTime = new Date().getTime();
 
-            // Check if the data is available in the cache and not expired
-            const cachedData = localStorage.getItem(cacheKey);
-            console.log(cachedData.toString);
-            if (cachedData && Date.now() - cachedData.timestamp < expirationTime) {
-                // Use the cached data
-                document.getElementById('planet-info').innerHTML = cachedData.data;
-            } else {
-                try {
-                    // Fetch the data from the API
-                    const response = await fetch('https://swapi.dev/api/planets/1/');
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch planet data');
-                    }
+      // Check if the cached data has expired
+      if (currentTime < expirationTime) {
+        displayData(parsedData.data);
+        displayResidents(parsedData.data.residents);
+        displayFilms(parsedData.data.films);
+      } else {
+        fetchData();
+      }
+    } else {
+      fetchData();
+    }
 
-                    const data = await response.json();
+    function fetchData() {
+      // Make the GET request
+      fetch('https://swapi.dev/api/planets/1/')
+        .then(response => response.json())
+        .then(data => {
+          // Cache the data in the browser for 1 hour (3600000 milliseconds)
+          const expirationTime = new Date().getTime() + 3600000;
+          const cachedData = {
+            data,
+            expirationTime
+          };
+          localStorage.setItem('swapiPlanetData', JSON.stringify(cachedData));
 
-                    var dataHTML = ``;
-                    dataHTML += `
-                        <h3><strong>Planet Name:</strong> ${data.name}</h3>
-                        <hr><h3><strong>Rotation Period:</strong> ${data.rotation_period}</h3>
-                        <hr><h3><strong>Orbital Period:</strong> ${data.orbital_period}</h3>
-                        <hr><h3><strong>Diameter:</strong> ${data.diameter}</h3>
-                        <hr><h3><strong>Climate:</strong> ${data.climate}</h3>
-                        <hr><h3><strong>Gravity:</strong> ${data.gravity}</h3>
-                        <hr><h3><strong>Terrain:</strong> ${data.terrain}</h3>
-                        <hr><h3><strong>Surface Water:</strong> ${data.surface_water}</h3>
-                        <hr><h3><strong>Population:</strong> ${data.population}</h3>
-                        <hr><h3><strong>Residents:</strong></h3>
-                    `
-                    for (var i = 0; i < 10; i++) {
-                        var URL = data.residents[i];
-                        const response = await fetch(URL);
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch resident data');
-                        }
-                        var people = await response.json();
-                        dataHTML += `
-                            <h4><strong>&emsp;Resident Name:</strong> ${people.name}</h4>
-                            <h4><strong>&emsp;Resident Height:</strong> ${people.height}</h4>
-                            <h4><strong>&emsp;Resident Mass:</strong> ${people.mass}</h4>
-                            <h4><strong>&emsp;Resident Hair Color:</strong> ${people.hair_color}</h4>
-                            <h4><strong>&emsp;Resident Skin Color:</strong> ${people.skin_color}</h4>
-                            <h4><strong>&emsp;Resident Eye Color:</strong> ${people.eye_color}</h4>
-                            <h4><strong>&emsp;Resident Birth Year:</strong> ${people.birth_year}</h4>
-                            <h4><strong>&emsp;Resident Gender:</strong> ${people.gender}</h4>
-                            <h4><strong>&emsp;Resident Homeworld:</strong> ${people.homeworld}</h4>
-                            <h4><strong>&emsp;Resident Films:</strong> ${people.films}</h4>
-                            <h4><strong>&emsp;Resident Species:</strong> ${people.species}</h4>
-                            <h4><strong>&emsp;Resident Vehicles:</strong> ${people.vehicles}</h4>
-                            <h4><strong>&emsp;Resident Starships:</strong> ${people.starships}</h4>
-                            <h4><strong>&emsp;Resident Created:</strong> ${people.created}</h4>
-                            <h4><strong>&emsp;Resident Edited:</strong> ${people.edited}</h4>
-                            <h4><strong>&emsp;Resident URL:</strong> ${people.url}</h4>
-                            <hr>
-                        `
-                    }
-                    dataHTML += `
-                    <h3><strong>Films:</strong></h3>
-                    `
-                    for (var i = 0; i < 5; i++) {
-                        var URL = data.films[i];
-                        const response = await fetch(URL);
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch film data');
-                        }
-                        var film = await response.json();
-                        dataHTML += `
-                            <h4><strong>&emsp;Film Title:</strong> ${film.title}</h4>
-                            <h4><strong>&emsp;Film Episode ID:</strong> ${film.episode_id}</h4>
-                            <h4><strong>&emsp;Film Opening Crawl:</strong> ${film.opening_crawl}</h4>
-                            <h4><strong>&emsp;Film Director:</strong> ${film.director}</h4>
-                            <h4><strong>&emsp;Film Producer:</strong> ${film.producer}</h4>
-                            <h4><strong>&emsp;Film Release Date:</strong> ${film.release_date}</h4>
-                            <h4><strong>&emsp;Film Characters:</strong> ${film.characters}</h4>
-                            <h4><strong>&emsp;Film Planets:</strong> ${film.planets}</h4>
-                            <h4><strong>&emsp;Film Starships:</strong> ${film.starships}</h4>
-                            <h4><strong>&emsp;Film Vehicles:</strong> ${film.vehicles}</h4>
-                            <h4><strong>&emsp;Film Species:</strong> ${film.species}</h4>
-                            <h4><strong>&emsp;Film Created:</strong> ${film.created}</h4>
-                            <h4><strong>&emsp;Film Edited:</strong> ${film.edited}</h4>
-                            <h4><strong>&emsp;Film URL:</strong> ${film.url}</h4>
-                            <hr>
-                        `
-                    }
-                    dataHTML += `
-                        <h3><strong>Created:</strong> ${data.created}</h3>
-                        <hr><h3><strong>Edited:</strong> ${data.edited}</h3>
-                        <hr><h3><strong>URL:</strong> ${data.url}</h3><hr>
-                    `
+          displayData(data);
+          displayResidents(data.residents);
+          displayFilms(data.films);
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
-                    // Cache the fetched data
-                    const cachedData = {
-                        timestamp: Date.now(),
-                        data: dataHTML
-                    };
-                    localStorage.setItem(cacheKey, JSON.stringify(cachedData));
+    function displayData(data) {
+      const planetDataElement = document.getElementById('planet-data');
+      planetDataElement.innerHTML = `
+        <p style="font-size: 24px;"><strong>Planet Name: </strong>${data.name}</>
+        <p style="font-size: 24px;"><strong>Rotation Period: </strong>${data.rotation_period}</>
+        <p style="font-size: 24px;"><strong>Orbital Period: </strong>${data.orbital_period}</>
+        <p style="font-size: 24px;"><strong>Diameter: </strong>${data.diameter}</>
+        <p style="font-size: 24px;"><strong>Climate: </strong>${data.climate}</>
+        <p style="font-size: 24px;"><strong>Gravity: </strong>${data.gravity}</>
+        <p style="font-size: 24px;"><strong>Terrain: </strong>${data.terrain}</>
+        <p style="font-size: 24px;"><strong>Surface Water: </strong>${data.surface_water}</>
+        <p style="font-size: 24px;"><strong>Population: </strong>${data.population}</>
+        <p style="font-size: 24px;"><strong>Created: </strong>${data.created}</>
+        <p style="font-size: 24px;"><strong>Edited: </strong>${data.edited}</>
+        <p style="font-size: 24px;"><strong>URL: </strong>${data.url}</>
+      `;
+    }
 
-                    // Display the data on the page
-                    document.getElementById('planet-info').innerHTML = cachedData.data;
-                } catch (error) {
-                    console.error(error);
-                    alert('An error occurred while fetching the planet data');
-                }
-            }
-        }
+    function displayResidents(residents) {
+      const residentsDataElement = document.getElementById('residents-data');
+      residentsDataElement.innerHTML = '<h2>Residents:</h2>';
 
-        // Call the fetchPlanetDetails function to initiate the data retrieval
-        fetchPlanetDetails();
-    </script>
+      if (residents.length === 0) {
+        residentsDataElement.innerHTML += '<p>No residents found for this planet.</p>';
+        return;
+      }
+
+      residents.forEach(residentUrl => {
+        fetch(residentUrl)
+          .then(response => response.json())
+          .then(data => {
+            residentsDataElement.innerHTML += `<p style="font-size: 18px">&emsp;&emsp;${data.name}</p>`;
+          })
+          .catch(error => console.error('Error:', error));
+      });
+    }
+
+    function displayFilms(films) {
+      const filmsDataElement = document.getElementById('films-data');
+      filmsDataElement.innerHTML = '<h2>Films:</h2>';
+
+      if (films.length === 0) {
+        filmsDataElement.innerHTML += '<p>No films found for this planet.</p>';
+        return;
+      }
+
+      films.forEach(filmUrl => {
+        fetch(filmUrl)
+          .then(response => response.json())
+          .then(data => {
+            filmsDataElement.innerHTML += `<p style="font-size: 18px">&emsp;&emsp;${data.title}</p>`;
+          })
+          .catch(error => console.error('Error:', error));
+      });
+    }
+  </script>
 </body>
-
 </html>
