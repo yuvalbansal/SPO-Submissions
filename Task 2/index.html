@@ -12,7 +12,7 @@
     <script>
         async function fetchPlanetDetails() {
             const cacheKey = 'planetData';
-            const expirationTime = 60 * 60 * 1000; // Cache expiration time in milliseconds (1 hour)
+            const expirationTime = 60 * 60 * 1000; // Cache expiration time in milliseconds (1 hour) 
 
             // Check if the data is available in the cache and not expired
             const cachedData = localStorage.getItem(cacheKey);
@@ -43,7 +43,7 @@
                         <hr><h3><strong>Population:</strong> ${data.population}</h3>
                         <hr><h3><strong>Residents:</strong></h3>
                     `
-                    for (var i=0; i<10; i++){
+                    for (var i = 0; i < 10; i++) {
                         var URL = data.residents[i];
                         const response = await fetch(URL);
                         if (!response.ok) {
@@ -73,7 +73,7 @@
                     dataHTML += `
                     <h3><strong>Films:</strong></h3>
                     `
-                    for (var i=0; i<5; i++){
+                    for (var i = 0; i < 5; i++) {
                         var URL = data.films[i];
                         const response = await fetch(URL);
                         if (!response.ok) {

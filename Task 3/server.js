@@ -15,7 +15,7 @@ const port = 8080;
 
 app.use(bodyParser.json());
 
-// Signup endpoint
+// Signup endpoint 
 app.post('/signup', async (req, res) => {
     try {
         const { userId, password } = req.body;
