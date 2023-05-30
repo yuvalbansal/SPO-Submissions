@@ -1,29 +1,71 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>API GET Request</title>
 </head>
+
 <body>
     <h1>Star Wars Planet Information</h1>
     <div id="planet-info"></div>
 
     <script>
-        // Make a GET request to the API endpoint
-        fetch("https://swapi.dev/api/planets/1/")
-            .then(response => response.json())
-            .then(data => {
-                // Access the planet data and display it on the page
-                const planetInfo = document.getElementById("planet-info");
-                planetInfo.innerHTML = `
-                    <h2>${data.name}</h2>
-                    <p><strong>Climate:</strong> ${data.climate}</p>
-                    <p><strong>Terrain:</strong> ${data.terrain}</p>
-                    <p><strong>Population:</strong> ${data.population}</p>
-                `;
-            })
-            .catch(error => {
-                console.log("Error:", error);
-            });
+        function formatPlanetDetails(data) {
+            return `
+                <h2>${data.name}</h2>
+                <p><strong>Rotation Period:</strong> ${data.rotation_period}</p>
+                <p><strong>Orbital Period:</strong> ${data.orbital_period}</p>
+                <p><strong>Diameter:</strong> ${data.diameter}</p>
+                <p><strong>Climate:</strong> ${data.climate}</p>
+                <p><strong>Gravity:</strong> ${data.gravity}</p>
+                <p><strong>Terrain:</strong> ${data.terrain}</p>
+                <p><strong>Surface Water:</strong> ${data.surface_water}</p>
+                <p><strong>Population:</strong> ${data.population}</p>
+                <p><strong>Residents:</strong> ${data.residents}</p>
+                <p><strong>Films:</strong> ${data.films}</p>
+                <p><strong>Created:</strong> ${data.created}</p>
+                <p><strong>Edited:</strong> ${data.edited}</p>
+                <p><strong>URL:</strong> ${data.url}</p>
+            `;
+        }
+        async function fetchPlanetDetails() {
+            const cacheKey = 'planetData';
+            const expirationTime = 60 * 60 * 1000; // Cache expiration time in milliseconds (1 hour)
+
+            // Check if the data is available in the cache and not expired
+            const cachedData = JSON.parse(localStorage.getItem(cacheKey));
+            if (cachedData && Date.now() - cachedData.timestamp < expirationTime) {
+                // Use the cached data
+                document.getElementById('planet-info').innerHTML = formatPlanetDetails(cachedData.data);
+            } else {
+                try {
+                    // Fetch the data from the API
+                    const response = await fetch('https://swapi.dev/api/planets/1/');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch planet data');
+                    }
+
+                    const data = await response.json();
+
+                    // Cache the fetched data
+                    const cachedData = {
+                        timestamp: Date.now(),
+                        data: data
+                    };
+                    localStorage.setItem(cacheKey, JSON.stringify(cachedData));
+
+                    // Display the data on the page
+                    document.getElementById('planet-info').innerHTML = formatPlanetDetails(data);
+                } catch (error) {
+                    console.error(error);
+                    alert('An error occurred while fetching the planet data');
+                }
+            }
+        }
+
+        // Call the fetchPlanetDetails function to initiate the data retrieval
+        fetchPlanetDetails();
     </script>
 </body>
+
 </html>
